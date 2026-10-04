@@ -27,6 +27,7 @@ Then open `http://localhost:8000`.
 
 ## Personalize it
 
+- Replace `assets/profile.png` with your real photo (same filename, portrait works best)
 - Replace `hello@harsh.dev` with your real email (in `index.html` + `script.js`)
 - Update GitHub / LinkedIn / X / Instagram URLs in `index.html`
 - Swap the 6 sample projects with your real work (edit `index.html` + `projectData` in `script.js`)

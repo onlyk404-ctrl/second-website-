@@ -42,7 +42,7 @@
         <section class="hero container" id="top" aria-labelledby="hero-title">
           <div class="hero-copy" data-reveal>
             <div class="eyebrow hero-eyebrow"><span class="eyebrow-line"></span> HARSH — DEVELOPER <span class="eyebrow-divider">/</span> WEBSITES · APPS · AI</div>
-            <p class="hero-hello">👋 Hi, I'm <strong>Harsh</strong></p>
+            <p class="hero-hello"><img class="hello-avatar" src="assets/profile.png" alt="Harsh profile photo" /> 👋 Hi, I'm <strong>Harsh</strong></p>
             <h1 id="hero-title">Websites,<br />apps &amp;<br /><span>smart AI.</span></h1>
             <p class="hero-typed">I build <strong id="typed-role">modern websites</strong><span class="typed-caret" aria-hidden="true">▍</span></p>
             <p class="hero-intro">I'm <strong>Harsh</strong> — a developer who turns ideas into fast websites, smooth mobile apps, and intelligent AI products people love to use.</p>
@@ -368,11 +368,26 @@
               <p class="about-side-note">GOOD SOFTWARE<br />SHOULD FEEL HUMAN.</p>
             </div>
             <div class="about-main" data-reveal>
-              <h2 id="about-title">Curious mind.<br /><em>Careful</em> builder.</h2>
-              <div class="about-copy">
-                <p>Hey! I'm <strong>Harsh</strong> — a developer from India who loves building for the web, mobile and AI. What started as curiosity ("how do apps actually work?") turned into a passion for shipping real products people use every day.</p>
-                <p>When I'm not coding, I'm learning new AI tools, helping friends with their projects, or dreaming up my next app idea. I believe good questions, clear communication, and a little curiosity can turn any complicated idea into something simple and useful.</p>
-                <a class="underlined-link" href="#contact">Let's work together <span aria-hidden="true">↗</span></a>
+              <figure class="profile-card" id="profile-card">
+                <div class="profile-frame">
+                  <div class="profile-glow" aria-hidden="true"></div>
+                  <img src="assets/profile.png" alt="Harsh — developer portrait, neon mask style" loading="lazy" />
+                  <span class="profile-scan" aria-hidden="true"></span>
+                  <span class="profile-status"><i></i> open to work</span>
+                </div>
+                <figcaption>
+                  <span class="profile-badges"><span>🌐 Web</span><span>📱 Apps</span><span>🤖 AI</span></span>
+                  <span class="profile-caption">FIG. 02 — <em>yes, that's me. mysterious, I know 😎</em></span>
+                </figcaption>
+              </figure>
+              <div>
+                <h2 id="about-title">Curious mind.<br /><em>Careful</em> builder.</h2>
+                <div class="about-copy">
+                  <p>Hey! I'm <strong>Harsh</strong> — a developer from India who loves building for the web, mobile and AI. What started as curiosity ("how do apps actually work?") turned into a passion for shipping real products people use every day.</p>
+                  <p>When I'm not coding, I'm learning new AI tools, helping friends with their projects, or dreaming up my next app idea. I believe good questions, clear communication, and a little curiosity can turn any complicated idea into something simple and useful.</p>
+                  <a class="underlined-link" href="#contact">Let's work together <span aria-hidden="true">↗</span></a>
+                  <a class="underlined-link underlined-link-dim" href="#terminal">Psst… try my interactive terminal <span aria-hidden="true">⌨</span></a>
+                </div>
               </div>
             </div>
 
@@ -581,5 +596,6 @@
     </div>
 
     <button class="to-top" id="to-top" type="button" aria-label="Back to top">↑</button>
+    <div class="glow-follower" id="glow-follower" aria-hidden="true"></div>
   </body>
 </html>

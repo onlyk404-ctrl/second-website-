@@ -414,3 +414,225 @@ if (form) {
     form.reset();
   });
 }
+
+/* ============ 3D tilt on profile photo ============ */
+const profileCard = document.querySelector('#profile-card');
+const profileFrame = profileCard?.querySelector('.profile-frame');
+if (profileCard && profileFrame && window.matchMedia('(pointer: fine)').matches) {
+  profileCard.addEventListener('mousemove', (e) => {
+    const rect = profileCard.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    profileFrame.style.transform = `rotateY(${x * 14}deg) rotateX(${-y * 14}deg) scale(1.02)`;
+  });
+  profileCard.addEventListener('mouseleave', () => {
+    profileFrame.style.transform = 'rotateY(0deg) rotateX(0deg) scale(1)';
+  });
+}
+
+/* ============ Cursor glow follower ============ */
+const glowFollower = document.querySelector('#glow-follower');
+if (glowFollower && window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  let gx = -500, gy = -500, tx = -500, ty = -500;
+  document.addEventListener('mousemove', (e) => {
+    tx = e.clientX; ty = e.clientY;
+    glowFollower.classList.add('on');
+  });
+  document.addEventListener('mouseleave', () => glowFollower.classList.remove('on'));
+  (function glowLoop() {
+    gx += (tx - gx) * 0.08;
+    gy += (ty - gy) * 0.08;
+    glowFollower.style.transform = `translate(${gx}px, ${gy}px)`;
+    requestAnimationFrame(glowLoop);
+  })();
+}
+
+/* ============ Matrix rain canvas ============ */
+const matrixCanvas = document.querySelector('#matrix');
+const terminalWindow = document.querySelector('.terminal-window');
+let matrixOn = false;
+let matrixRAF = null;
+if (matrixCanvas && terminalWindow) {
+  const mctx = matrixCanvas.getContext('2d');
+  const glyphs = '01アイタチツテトナニヌネノHARSH<>/\\{}[]$#@!?*+='.split('');
+  let drops = [];
+  function sizeMatrix() {
+    const r = terminalWindow.getBoundingClientRect();
+    matrixCanvas.width = Math.max(r.width, 300);
+    matrixCanvas.height = Math.max(r.height, 300);
+    const cols = Math.floor(matrixCanvas.width / 16);
+    drops = Array.from({ length: cols }, () => Math.random() * -40);
+  }
+  function drawMatrix() {
+    if (!matrixOn) { matrixRAF = null; return; }
+    mctx.fillStyle = 'rgba(8, 10, 8, 0.12)';
+    mctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+    mctx.font = '14px monospace';
+    drops.forEach((y, i) => {
+      const ch = glyphs[Math.floor(Math.random() * glyphs.length)];
+      mctx.fillStyle = Math.random() > 0.97 ? '#eaffb0' : '#7fae2e';
+      mctx.fillText(ch, i * 16, y * 16);
+      drops[i] = y * 16 > matrixCanvas.height && Math.random() > 0.976 ? 0 : y + 0.6;
+    });
+    matrixRAF = requestAnimationFrame(drawMatrix);
+  }
+  window.toggleMatrix = function (force) {
+    matrixOn = typeof force === 'boolean' ? force : !matrixOn;
+    terminalWindow.classList.toggle('matrix-on', matrixOn);
+    if (matrixOn) {
+      sizeMatrix();
+      if (!matrixRAF) drawMatrix();
+    }
+  };
+  window.addEventListener('resize', () => { if (matrixOn) sizeMatrix(); });
+}
+
+/* ============ Interactive terminal ============ */
+const termOutput = document.querySelector('#terminal-output');
+const termForm = document.querySelector('#terminal-form');
+const termInput = document.querySelector('#terminal-input');
+const termBody = document.querySelector('#terminal-body');
+
+function termScroll() {
+  if (termBody) termBody.scrollTop = termBody.scrollHeight;
+}
+function termPrint(html, cls = '') {
+  if (!termOutput) return;
+  const div = document.createElement('div');
+  div.className = 'term-line ' + cls;
+  div.innerHTML = html;
+  termOutput.appendChild(div);
+  termScroll();
+}
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+const ASCII = `<pre class="term-ascii">  _   _   ___   ___   ___   _   _
+ | | | | / _ \\ |_ _| / _ \\ | | | |
+ | |_| || | | | | | | | | || |_| |
+ |  _  || |_| | | | | |_| | \\___/
+ |_| |_| \\___/ |___| \\___/  v2.0</pre>`;
+
+const COMMANDS = {
+  help() {
+    return `<span class="term-ok">Available commands:</span>
+  <span class="term-ok">whoami</span>    — who are you?
+  <span class="term-ok">harsh</span>     — who is Harsh?
+  <span class="term-ok">skills</span>    — the tech stack
+  <span class="term-ok">projects</span>  — what I've shipped
+  <span class="term-ok">contact</span>   — how to reach me
+  <span class="term-ok">socials</span>   — find me online
+  <span class="term-ok">matrix</span>    — toggle the matrix 🕶️
+  <span class="term-ok">hire</span>      — start the hiring sequence 🚀
+  <span class="term-ok">joke</span>      — a dev joke, obviously
+  <span class="term-ok">clear</span>     — wipe the terminal`;
+  },
+  whoami() {
+    return `You are <span class="term-ok">visitor #${Math.floor(1000 + Math.random() * 9000)}</span> — a person of excellent taste, currently exploring Harsh's portfolio. 😎`;
+  },
+  harsh() {
+    return `Harsh — developer from India 🇮🇳
+  🌐 builds <span class="term-ok">websites</span> that load in a blink
+  📱 ships <span class="term-ok">mobile apps</span> people actually keep
+  🤖 crafts <span class="term-ok">AI products</span> that feel like magic
+  ☕ powered by chai. hire him.`;
+  },
+  about() { return COMMANDS.harsh(); },
+  skills() {
+    return `<span class="term-ok">stack --list:</span>
+  frontend ▓▓▓▓▓▓▓▓▓░ React · Next.js · Tailwind
+  mobile   ▓▓▓▓▓▓▓▓░░ Flutter · React Native
+  ai       ▓▓▓▓▓▓▓▓░░ OpenAI · LangChain · Python
+  backend  ▓▓▓▓▓▓▓▓░░ Node.js · MongoDB · Firebase`;
+  },
+  projects() {
+    return `<span class="term-ok">shipped --recent:</span>
+  1. NovaKart    🌐 e-commerce website (Next.js)
+  2. FitPulse    📱 fitness app (Flutter)
+  3. PromptShip  🤖 AI agents SaaS (OpenAI)
+  4. FoodieGo    🍔 food delivery web + app
+  5. VisionLens  👁️ AI image recognition
+  6. EduSpark    🎓 AI learning app
+  <span class="term-dim">tip: scroll up to #work for the pretty version ↓… I mean ↑</span>`;
+  },
+  contact() {
+    return `📧 email → <a class="term-link" href="mailto:hello@harsh.dev">hello@harsh.dev</a>
+  ⚡ replies within 24 hours. or scroll down to the form 👇`;
+  },
+  socials() {
+    return `find me everywhere:
+  🐙 <a class="term-link" href="https://github.com/harsh-dev" target="_blank" rel="noreferrer">github.com/harsh-dev</a>
+  💼 <a class="term-link" href="https://www.linkedin.com/in/harsh-dev" target="_blank" rel="noreferrer">linkedin.com/in/harsh-dev</a>
+  🐦 <a class="term-link" href="https://x.com/harsh_dev" target="_blank" rel="noreferrer">x.com/harsh_dev</a>
+  📸 <a class="term-link" href="https://www.instagram.com/harsh.dev" target="_blank" rel="noreferrer">instagram.com/harsh.dev</a>`;
+  },
+  matrix() {
+    window.toggleMatrix?.();
+    return matrixOn ? '🕶️ <span class="term-ok">Welcome to the Matrix.</span> (type matrix again to exit)' : '<span class="term-dim">Matrix disabled. Back to reality. Boring, I know.</span>';
+  },
+  hire() {
+    setTimeout(() => {
+      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+    }, 1200);
+    return `🚀 <span class="term-ok">Excellent choice!</span> Initiating hiring sequence…
+  ▓▓▓▓▓▓▓▓▓▓ 100% — taking you to the contact form…`;
+  },
+  joke() {
+    const jokes = [
+      'Why do programmers prefer dark mode? Because light attracts bugs. 🪲',
+      'I told my computer I needed a break… now it won\'t stop sending me KitKat ads. 🍫',
+      'Why did the developer go broke? He used up all his cache. 💸',
+      'There are only 10 kinds of people: those who understand binary and those who don\'t. 01',
+      'My code doesn\'t have bugs, it has… undocumented features. ✨',
+    ];
+    return '😄 ' + jokes[Math.floor(Math.random() * jokes.length)] + ' <span class="term-dim">(type joke for another)</span>';
+  },
+  sudo() { return '<span class="term-warn">nice try 😏 — but only Harsh has sudo access here.</span>'; },
+  hello() { return '👋 Hello! Type <span class="term-ok">help</span> to see what I can do.'; },
+  hi() { return COMMANDS.hello(); },
+  date() { return '📅 ' + new Date().toString(); },
+  echo(args) { return escapeHtml(args.join(' ')) || '<span class="term-dim">(nothing to echo)</span>'; },
+};
+
+function runCommand(raw) {
+  const input = raw.trim();
+  termPrint(`<span class="prompt">visitor@harsh:~$</span> <span class="cmd-echo">${escapeHtml(input) || ''}</span>`);
+  if (!input) return;
+  const [cmd, ...args] = input.toLowerCase().split(/\s+/);
+  if (cmd === 'clear') {
+    termOutput.innerHTML = '';
+    return;
+  }
+  if (COMMANDS[cmd]) {
+    termPrint(COMMANDS[cmd](args));
+  } else {
+    termPrint(`<span class="term-warn">command not found: ${escapeHtml(cmd)}</span> — try <span class="term-ok">help</span> 🤔`);
+  }
+}
+
+if (termOutput && termForm && termInput) {
+  // Boot message
+  termPrint(ASCII);
+  termPrint(`Welcome to <span class="term-ok">harsh.exe</span> — the interactive portfolio terminal.`);
+  termPrint(`Type <span class="term-ok">help</span> to begin. Go on, break something. 😈`);
+  termPrint(`<span class="term-dim">─────────────────────────────────────</span>`);
+
+  termForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    runCommand(termInput.value);
+    termInput.value = '';
+    termInput.focus();
+  });
+
+  // Clicking anywhere in terminal focuses input
+  termBody?.addEventListener('click', () => termInput.focus());
+
+  // Hint buttons run commands
+  document.querySelectorAll('[data-cmd]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      runCommand(btn.getAttribute('data-cmd') || '');
+      termInput.focus();
+    });
+  });
+}
