@@ -1,10 +1,8 @@
-# Developer Portfolio Starter
+# Harsh — Portfolio (Websites, Apps & AI)
 
-A responsive, single-page developer portfolio with a bold charcoal-and-lime visual style. It uses plain HTML, CSS, and JavaScript—no build tools or dependencies required.
+A responsive single-page developer portfolio for **Harsh**. Plain HTML, CSS and JavaScript — no build tools or dependencies.
 
 ## Run locally
-
-From this folder, start a small static server:
 
 ```bash
 python3 -m http.server 8000
@@ -12,14 +10,25 @@ python3 -m http.server 8000
 
 Then open `http://localhost:8000`.
 
+## What's inside
+
+- **Hero** — typing animation, résumé download, social links, mini stats
+- **Tech marquee** — scrolling stack strip
+- **Work** — 6 projects (websites, apps, AI) with category filters + detail modal
+- **Services** — websites, apps, AI, backend with pricing
+- **Skills** — animated skill bars + tool chips
+- **About** — bio + fun facts
+- **Journey** — experience timeline
+- **Stats band** — animated counters
+- **Testimonials** — auto-playing slider
+- **FAQ** — accordion
+- **Contact** — working form (validates + opens email), copy-email button, socials
+- **Extras** — mobile menu, scrollspy nav, back-to-top, reveal animations
+
 ## Personalize it
 
-Edit `index.html` and replace the starter content:
-
-- Change **YOUR NAME** and the short introduction in the hero and footer.
-- Replace the sample projects (Signal, Daylight, Shipshape) with real work, screenshots, links, and outcomes. The current project previews are HTML/CSS mockups.
-- Update the GitHub and LinkedIn profile URLs.
-- Change `hello@yourname.dev` to your email address.
-- Adjust the example stack chips to match the technologies you actually use.
-
-Colors, typography, layout, and responsive behavior live in `styles.css`; menu, reveal animations, email copy, and the footer year live in `script.js`.
+- Replace `hello@harsh.dev` with your real email (in `index.html` + `script.js`)
+- Update GitHub / LinkedIn / X / Instagram URLs in `index.html`
+- Swap the 6 sample projects with your real work (edit `index.html` + `projectData` in `script.js`)
+- Adjust services, prices, skills, timeline, testimonials and FAQs to match you
+- Styles live in `styles.css`; all interactivity in `script.js`
